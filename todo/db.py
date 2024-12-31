@@ -1,5 +1,10 @@
 import sqlite3
 from pathlib import Path
+from typing import Any
+
+
+def get_connection(path: Path):
+    return sqlite3.connect(path)
 
 
 def create_db(path: Path, name: str):
@@ -7,7 +12,7 @@ def create_db(path: Path, name: str):
     if db_path.exists():
         return
 
-    conn = sqlite3.connect(db_path)
+    conn = get_connection(db_path)
     cursor = conn.cursor()
 
     cursor.execute('PRAGMA foreign_keys = ON;')
@@ -17,8 +22,8 @@ def create_db(path: Path, name: str):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         color INTEGER,
-        created_at TEXT,
-        updated_at TEXT
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
     );
     ''')
 
@@ -27,8 +32,8 @@ def create_db(path: Path, name: str):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         color INTEGER,
-        created_at TEXT,
-        updated_at TEXT
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
     );
     ''')
 
@@ -48,8 +53,8 @@ def create_db(path: Path, name: str):
         day_of_month INTEGER,
         recurrence_date TEXT,
         priority INTEGER,
-        created_at TEXT,
-        updated_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
         FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
     );
     ''')
@@ -66,3 +71,26 @@ def create_db(path: Path, name: str):
 
     conn.commit()
     conn.close()
+
+
+class DB:
+    def __init__(self, path: Path):
+        self.path = path
+
+    def execute_query(self, query: str, params: list[Any] = []):
+        with get_connection(self.path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            conn.commit()
+
+    def fetch_all(self, query: str, params: list[Any] = []):
+        with get_connection(self.path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            return cursor.fetchall()
+        
+    def fetch_one(self, query: str, params: list[Any] = []):
+        with get_connection(self.path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            return cursor.fetchone()

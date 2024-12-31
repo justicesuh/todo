@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from todo.commands.base import BaseCommand
-from todo.db import create_db
+from todo.db import DB, create_db
 
 
 class TodoCLI:
@@ -15,17 +15,23 @@ class TodoCLI:
         self.command_map = {}
         self.process_commands()
 
+        self.db: DB
+
     def init_data(self, path: Path):
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
+        
         create_db(path, 'todo')
+        self.db = DB(path / 'todo.db')
 
     def run(self):
         self.init_data(Path.home() / '.todo')
 
-        args = self.parser.parse_args.__dict__
+        args = self.parser.parse_args().__dict__
         command_name = args.pop('command_name', None)
-        print(command_name)
+        if command_name is None:
+            return None
+        self.command_map[command_name].handle(**args)
 
     def process_commands(self):
         self.command_map = self.get_commands('todo.commands')
