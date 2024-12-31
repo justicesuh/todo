@@ -1,5 +1,9 @@
+from todo.cli import TodoCLI
+
+
 def main():
-    print('Hello World')
+    TodoCLI().run()
+
 
 if __name__ == '__main__':
     main()
