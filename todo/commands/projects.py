@@ -30,6 +30,11 @@ class Command(NamespaceCommand):
         action: str = options['action']
         detail: list[str] = options['detail']
         match action:
+            case 'list':
+                query = 'SELECT * FROM projects;'
+                records = self.db.fetch_all(query)
+                for record in records:
+                    print(record)
             case 'add':
                 person = self.parse_detail(detail)
                 if person is not None:
