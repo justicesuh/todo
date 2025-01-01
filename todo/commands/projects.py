@@ -4,6 +4,7 @@ from typing import Any
 
 from todo.commands.base import NamespaceCommand
 from todo.models import Color, Project
+from todo.utils import tabulate
 
 
 class Command(NamespaceCommand):
@@ -33,8 +34,11 @@ class Command(NamespaceCommand):
             case 'list':
                 query = 'SELECT * FROM projects;'
                 records = self.db.fetch_all(query)
+                data: list[Any] = []
                 for record in records:
-                    print(record)
+                    project = Project(*record)
+                    data.append([str(project.id), project.name])
+                print(tabulate(data, ['ID', 'Name']))
             case 'add':
                 person = self.parse_detail(detail)
                 if person is not None:

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 
 class Color(Enum):
@@ -19,7 +18,7 @@ class Color(Enum):
 
 @dataclass
 class Project:
-    id: Optional[int]
+    id: int | None
     name: str
     color: Color
     created_at: datetime
