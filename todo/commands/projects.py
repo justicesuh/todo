@@ -4,7 +4,8 @@ from typing import Any
 
 from todo.commands.base import NamespaceCommand
 from todo.models import Color, Project
-from todo.utils import tabulate
+from todo.styles import get_escape_sequence
+from todo.utils import format, tabulate
 
 
 class Command(NamespaceCommand):
@@ -37,13 +38,14 @@ class Command(NamespaceCommand):
                 data: list[Any] = []
                 for record in records:
                     project = Project(*record)
-                    data.append([str(project.id), project.name])
+                    color = get_escape_sequence(project.color)
+                    data.append([str(project.id), format(project.name, fg=color)])
                 print(tabulate(data, ['ID', 'Name']))
             case 'add':
                 person = self.parse_detail(detail)
                 if person is not None:
                     query = 'INSERT INTO projects (name, color, created_at, updated_at) VALUES (?, ?, ?, ?);'
-                    params: list[Any] = [person.name, person.color.value, person.created_at.isoformat(), person.updated_at.isoformat()]
+                    params: list[Any] = [person.name, person.color, person.created_at.isoformat(), person.updated_at.isoformat()]
                     self.db.execute_query(query, params)
             case _:
                 pass

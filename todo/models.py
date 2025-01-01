@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 
-class Color(Enum):
+class Color(int, Enum):
     BLACK = 30
     RED = 31
     GREEN = 32
