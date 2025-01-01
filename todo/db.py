@@ -21,7 +21,7 @@ def create_db(path: Path, name: str):
     CREATE TABLE IF NOT EXISTS projects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
-        color INTEGER,
+        color INTEGER NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
     );
@@ -31,7 +31,7 @@ def create_db(path: Path, name: str):
     CREATE TABLE IF NOT EXISTS labels (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
-        color INTEGER,
+        color INTEGER NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
     );
